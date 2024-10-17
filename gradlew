@@ -116,6 +116,8 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
+# Set the ANDROID_HOME environment variable to the path of the Android SDK
+export ANDROID_HOME=/path/to/your/sdk
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
