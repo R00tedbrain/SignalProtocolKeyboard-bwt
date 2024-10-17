@@ -9,6 +9,7 @@ import org.signal.libsignal.protocol.InvalidKeyIdException;
 import org.signal.libsignal.protocol.InvalidMessageException;
 import org.signal.libsignal.protocol.state.PreKeyRecord;
 import org.signal.libsignal.protocol.state.PreKeyStore;
+import org.signal.libsignal.protocol.state.KyberPreKeyRecord;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,5 +76,34 @@ public class PreKeyStoreImpl implements PreKeyStore {
   public int getSize() {
     return store.size();
   }
-}
 
+  public KyberPreKeyRecord loadKyberPreKey(int preKeyId) throws InvalidKeyIdException {
+    Log.d(TAG, "Loading KyberPreKeyRecord with id: " + preKeyId);
+    try {
+      if (!store.containsKey(preKeyId)) {
+        throw new InvalidKeyIdException("No such KyberPreKeyRecord! (id = " + preKeyId + ")");
+      }
+
+      store.put(preKeyId, new PreKeyWithStatus(Objects.requireNonNull(store.get(preKeyId)).getSerializedPreKeyRecord(), true));
+      Log.d(TAG, "Setting KyberPreKeyRecord with id " + preKeyId + " to used");
+
+      return new KyberPreKeyRecord(Objects.requireNonNull(store.get(preKeyId)).getSerializedPreKeyRecord());
+    } catch (InvalidMessageException e) {
+      throw new AssertionError(e);
+    }
+  }
+
+  public void storeKyberPreKey(int preKeyId, KyberPreKeyRecord record) {
+    Log.d(TAG, "Storing KyberPreKeyRecord with id: " + preKeyId);
+    store.put(preKeyId, new PreKeyWithStatus(record.serialize(), false));
+  }
+
+  public boolean containsKyberPreKey(int preKeyId) {
+    return store.containsKey(preKeyId);
+  }
+
+  public void removeKyberPreKey(int preKeyId) {
+    Log.d(TAG, "Removing KyberPreKeyRecord with id: " + preKeyId);
+    store.remove(preKeyId);
+  }
+}
