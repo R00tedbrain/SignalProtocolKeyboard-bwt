@@ -12,11 +12,13 @@ import org.signal.libsignal.protocol.state.PreKeyRecord;
 import org.signal.libsignal.protocol.state.SessionRecord;
 import org.signal.libsignal.protocol.state.SignalProtocolStore;
 import org.signal.libsignal.protocol.state.SignedPreKeyRecord;
+import org.signal.libsignal.protocol.state.KyberPreKeyStore;
+import org.signal.libsignal.protocol.state.KyberPreKeyRecord;
 
 import java.util.List;
 import java.util.UUID;
 
-public class SignalProtocolStoreImpl implements SignalProtocolStore {
+public class SignalProtocolStoreImpl implements SignalProtocolStore, KyberPreKeyStore {
 
   @JsonProperty
   private final PreKeyStoreImpl preKeyStore = new PreKeyStoreImpl();
@@ -158,6 +160,26 @@ public class SignalProtocolStoreImpl implements SignalProtocolStore {
   @Override
   public SenderKeyRecord loadSenderKey(SignalProtocolAddress sender, UUID distributionId) {
     return senderKeyStore.loadSenderKey(sender, distributionId);
+  }
+
+  @Override
+  public KyberPreKeyRecord loadKyberPreKey(int preKeyId) throws InvalidKeyIdException {
+    return preKeyStore.loadKyberPreKey(preKeyId);
+  }
+
+  @Override
+  public void storeKyberPreKey(int preKeyId, KyberPreKeyRecord record) {
+    preKeyStore.storeKyberPreKey(preKeyId, record);
+  }
+
+  @Override
+  public boolean containsKyberPreKey(int preKeyId) {
+    return preKeyStore.containsKyberPreKey(preKeyId);
+  }
+
+  @Override
+  public void removeKyberPreKey(int preKeyId) {
+    preKeyStore.removeKyberPreKey(preKeyId);
   }
 
   public PreKeyStoreImpl getPreKeyStore() {
